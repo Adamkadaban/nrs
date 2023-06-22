@@ -207,10 +207,18 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
         // Adding TCP sockets to the table
         if (&protocol_type[0..3] == "TCP") && (tcp_sockets == true || (tcp_sockets == false && udp_sockets == false)){
-            table.add_row(row);
+            if (si.local_addr().is_ipv6()) && (ipv6_sockets == true || (ipv4_sockets == false && ipv6_sockets == false)){
+                table.add_row(row);
+            } else if (!si.local_addr().is_ipv6()) && (ipv4_sockets == true || (ipv4_sockets == false && ipv6_sockets == false)){
+                table.add_row(row);
+            }
         // Adding UDP sockets to the table
         } else if (&protocol_type[0..3] == "UDP") && (udp_sockets == true || (tcp_sockets == false && udp_sockets == false)){
-            table.add_row(row);
+            if (si.local_addr().is_ipv6()) && (ipv6_sockets == true || (ipv4_sockets == false && ipv6_sockets == false)){
+                table.add_row(row);
+            } else if (!si.local_addr().is_ipv6()) && (ipv4_sockets == true || (ipv4_sockets == false && ipv6_sockets == false)){
+                table.add_row(row);
+            }
         }
 
     }
