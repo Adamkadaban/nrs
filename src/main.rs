@@ -84,9 +84,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             .takes_value(false))
         .get_matches();
 
-    let only_listening_sockets = matches.is_present("listening");
-    let only_ipv4_sockets = matches.is_present("inet4");
-    let only_ipv6_sockets = matches.is_present("inet6");
+    let listening_sockets = matches.is_present("listening");
+    let ipv4_sockets = matches.is_present("inet4");
+    let ipv6_sockets = matches.is_present("inet6");
     let udp_sockets = matches.is_present("udp");
     let tcp_sockets = matches.is_present("tcp");
     let show_numbers = matches.is_present("numbers");
@@ -136,6 +136,24 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             Cell::new("")
         };
 
+        let protocol_type = if let ProtocolSocketInfo::Tcp(tcp_si) = &si.protocol_socket_info {
+            if si.local_addr().is_ipv6() {
+                "TCP6"
+            } else {
+                "TCP"
+            }
+        } else if let ProtocolSocketInfo::Udp(udp_si) = &si.protocol_socket_info{
+            if si.local_addr().is_ipv6() {
+                "UDP6"
+            } else {
+                "UDP"
+            }
+        } else {
+            ""
+        };
+
+
+
         let row_number = Cell::new((index + 1).to_string().as_str());
         let pid = si.associated_pids.first().cloned().unwrap_or(0);
         let program_name = process_names.get(&pid).cloned().unwrap_or_else(String::new);
@@ -145,11 +163,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             format!("{}/{}", pid, program_name)
         };
 
-        let row = match (&si.protocol_socket_info, si.local_addr().is_ipv6()) {
+
+        let row = match (&si.protocol_socket_info, &si.local_addr().is_ipv6()) {
             (ProtocolSocketInfo::Tcp(tcp_si), false) => {
                 Row::new(vec![
                     row_number,
-                    Cell::new("TCP"),
+                    Cell::new(protocol_type),
                     Cell::new(&tcp_si.local_addr.to_string()),
                     Cell::new(&tcp_si.local_port.to_string()),
                     Cell::new(&tcp_si.remote_addr.to_string()),
@@ -162,7 +181,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 // Handle IPv6 TCP connection
                 Row::new(vec![
                     row_number,
-                    Cell::new("TCP6"),
+                    Cell::new(protocol_type),
                     Cell::new(&tcp_si.local_addr.to_string()),
                     Cell::new(&tcp_si.local_port.to_string()),
                     Cell::new(&tcp_si.remote_addr.to_string()),
@@ -174,7 +193,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             (ProtocolSocketInfo::Udp(udp_si), false) => {
                 Row::new(vec![
                     row_number,
-                    Cell::new("UDP"),
+                    Cell::new(protocol_type),
                     Cell::new(&udp_si.local_addr.to_string()),
                     Cell::new(&udp_si.local_port.to_string()),
                     Cell::new("*"),
@@ -187,7 +206,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 // Handle IPv6 UDP connection
                 Row::new(vec![
                     row_number,
-                    Cell::new("UDP6"),
+                    Cell::new(protocol_type),
                     Cell::new(&udp_si.local_addr.to_string()),
                     Cell::new(&udp_si.local_port.to_string()),
                     Cell::new("*"),
@@ -197,7 +216,18 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 ])
             }
         };
+
         table.add_row(row);
+
+        // Adding TCP sockets to the table
+        if (&si.protocol_socket_info == ProtocolSocketInfo::Tcp(_)) && (tcp_sockets == true || (tcp_sockets == false && udp_sockets == false)){
+            table.add_row(row);
+
+        // Adding UDP sockets to the table
+        } else if (&si.protocol_socket_info == ProtocolSocketInfo::Udp(_)) && (udp_sockets == true || (tcp_sockets == false && udp_sockets == false)){
+            table.add_row(row);
+        }
+
     }
 
     table.printstd();
