@@ -27,51 +27,37 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             .short("t")
             .long("tcp")
             .help("Display TCP sockets.")
-            .takes_value(true)
-            .possible_values(&["auto","always","never"])
-            .default_value("auto"))
+            .takes_value(false))
         .arg(Arg::with_name("udp")
             .short("u")
             .long("udp")
             .help("Display UDP sockets.")
-            .takes_value(true)
-            .possible_values(&["auto","always","never"])
-            .default_value("auto"))
+            .takes_value(false))
         .arg(Arg::with_name("listening")
             .short("l")
             .long("listening")
             .help("Display  only  listening sockets (these are omitted by default).")
-            .takes_value(true)
-            .possible_values(&["auto","always","never"])
-            .default_value("auto"))
+            .takes_value(false))
         .arg(Arg::with_name("inet6")
             .short("6")
             .long("inet6")
             .help("Display only IP version 6 sockets")
-            .takes_value(true)
-            .possible_values(&["auto","always","never"])
-            .default_value("auto"))
+            .takes_value(false))
         .arg(Arg::with_name("inet4")
             .short("4")
             .long("inet4")
             .help("Display only IP version 4 sockets")
-            .takes_value(true)
-            .possible_values(&["auto","always","never"])
-            .default_value("auto"))
+            .takes_value(false))
         .arg(Arg::with_name("numbers")
             .short("N")
             .long("numbers")
             .help("Show row number alongside socket entries")
-            .takes_value(true)
-            .possible_values(&["auto","always","never"])
-            .default_value("auto"))
+            .takes_value(false))
         .arg(Arg::with_name("colors")
             .short("c")
             .long("colors")
             .help("Show colors in output")
-            .takes_value(true)
-            .possible_values(&["auto","always","never"])
-            .default_value("auto"))
+            .takes_value(false))
         .arg(Arg::with_name("compact")
             .short("C")
             .long("compact")
@@ -136,13 +122,13 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             Cell::new("")
         };
 
-        let protocol_type = if let ProtocolSocketInfo::Tcp(tcp_si) = &si.protocol_socket_info {
+        let protocol_type = if let ProtocolSocketInfo::Tcp(_) = &si.protocol_socket_info {
             if si.local_addr().is_ipv6() {
                 "TCP6"
             } else {
                 "TCP"
             }
-        } else if let ProtocolSocketInfo::Udp(udp_si) = &si.protocol_socket_info{
+        } else if let ProtocolSocketInfo::Udp(_) = &si.protocol_socket_info{
             if si.local_addr().is_ipv6() {
                 "UDP6"
             } else {
@@ -217,14 +203,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             }
         };
 
-        table.add_row(row);
 
         // Adding TCP sockets to the table
-        if (&si.protocol_socket_info == ProtocolSocketInfo::Tcp(_)) && (tcp_sockets == true || (tcp_sockets == false && udp_sockets == false)){
+        if (&protocol_type[0..3] == "TCP") && (tcp_sockets == true || (tcp_sockets == false && udp_sockets == false)){
             table.add_row(row);
-
         // Adding UDP sockets to the table
-        } else if (&si.protocol_socket_info == ProtocolSocketInfo::Udp(_)) && (udp_sockets == true || (tcp_sockets == false && udp_sockets == false)){
+        } else if (&protocol_type[0..3] == "UDP") && (udp_sockets == true || (tcp_sockets == false && udp_sockets == false)){
             table.add_row(row);
         }
 
