@@ -17,13 +17,6 @@ fn get_process_names(pids: &[u32]) -> HashMap<u32, String> {
     process_names
 }
 
-// fn format_ipv6_address(addr: &[u8]) -> String {
-//     let segments: Vec<String> = addr
-//         .chunks(2)
-//         .map(|chunk| format!("{:02X}{:02X}", chunk[0], chunk[1]))
-//         .collect();
-//     segments.join(":")
-// }
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let matches = App::new("BetStat")
