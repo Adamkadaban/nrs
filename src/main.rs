@@ -94,7 +94,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let show_numbers = matches.is_present("numbers");
     let show_colors = matches.is_present("colors");
     let be_compact = matches.is_present("compact");
-    let use_ascii = matches.is_present("ascii");
+    let use_ascii = matches.value_of("ascii");
 
 
     let af_flags = AddressFamilyFlags::IPV4 | AddressFamilyFlags::IPV6;
@@ -102,7 +102,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let sockets_info = get_sockets_info(af_flags, proto_flags)?;
 
     let mut table = Table::new();
-    table.set_format(*format::consts::FORMAT_BOX_CHARS);
+    if use_ascii == Some("always") || use_ascii == Some("auto"){
+        table.set_format(*format::consts::FORMAT_BOX_CHARS);
+    }
     table.set_titles(row![
         Fr->"No.",
         Fc->"Protocol",
