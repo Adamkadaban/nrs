@@ -86,6 +86,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let sockets_info = get_sockets_info(af_flags, proto_flags)?;
 
     let mut table = Table::new();
+    table.set_format(*format::consts::FORMAT_NO_LINESEP_WITH_TITLE);
     if be_compact{
         table.set_format(*format::consts::FORMAT_NO_BORDER_LINE_SEPARATOR);
     }
