@@ -19,10 +19,10 @@ fn get_process_names(pids: &[u32]) -> HashMap<u32, String> {
 
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let matches = App::new("BetStat")
+    let matches = App::new("nrs")
         .version("1.0")
         .author("@adamkadaban")
-        .about("Better Netstat")
+        .about("Netstat with sensible defaults")
         .arg(Arg::with_name("tcp")
             .short("t")
             .long("tcp")
