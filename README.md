@@ -1,5 +1,5 @@
 # nrs
-Netstat with sensible defaults - implemented in Rust
+Netstat with sensible defaults - built in Rust
 
 
 ### what's with the name?
