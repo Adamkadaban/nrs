@@ -76,14 +76,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             .short("C")
             .long("compact")
             .help("Output in compact table")
-            .possible_values(&["auto","always","never"])
-            .default_value("auto"))
+            .takes_value(false))
         .arg(Arg::with_name("ascii")
             .short("s")
             .long("ascii")
             .help("Use ascii instead of unicode for table output")
-            .possible_values(&["auto","always","never"])
-            .default_value("auto"))
+            .takes_value(false))
         .get_matches();
 
     let only_listening_sockets = matches.is_present("listening");
@@ -94,7 +92,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let show_numbers = matches.is_present("numbers");
     let show_colors = matches.is_present("colors");
     let be_compact = matches.is_present("compact");
-    let use_ascii = matches.value_of("ascii");
+    let use_ascii = matches.is_present("ascii");
 
 
     let af_flags = AddressFamilyFlags::IPV4 | AddressFamilyFlags::IPV6;
@@ -102,7 +100,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let sockets_info = get_sockets_info(af_flags, proto_flags)?;
 
     let mut table = Table::new();
-    if use_ascii == Some("always") || use_ascii == Some("auto"){
+    if be_compact{
+        table.set_format(*format::consts::FORMAT_NO_BORDER_LINE_SEPARATOR);
+    }
+    else if !use_ascii{
         table.set_format(*format::consts::FORMAT_BOX_CHARS);
     }
     table.set_titles(row![
