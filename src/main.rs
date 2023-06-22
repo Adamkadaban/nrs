@@ -111,7 +111,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let process_names = get_process_names(&pids);
 
-    for (index, si) in sockets_info.iter().enumerate() {
+    let mut index = 0;
+
+    for si in sockets_info.iter() {
         let state_cell = if let ProtocolSocketInfo::Tcp(tcp_si) = &si.protocol_socket_info {
             if tcp_si.state == netstat2::TcpState::Established {
                 Cell::new(&tcp_si.state.to_string()).with_style(Attr::ForegroundColor(color::GREEN))
@@ -209,15 +211,19 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         if (&protocol_type[0..3] == "TCP") && (tcp_sockets == true || (tcp_sockets == false && udp_sockets == false)){
             if (si.local_addr().is_ipv6()) && (ipv6_sockets == true || (ipv4_sockets == false && ipv6_sockets == false)){
                 table.add_row(row);
+                index += 1;
             } else if (!si.local_addr().is_ipv6()) && (ipv4_sockets == true || (ipv4_sockets == false && ipv6_sockets == false)){
                 table.add_row(row);
+                index += 1;
             }
         // Adding UDP sockets to the table
         } else if (&protocol_type[0..3] == "UDP") && (udp_sockets == true || (tcp_sockets == false && udp_sockets == false)){
             if (si.local_addr().is_ipv6()) && (ipv6_sockets == true || (ipv4_sockets == false && ipv6_sockets == false)){
                 table.add_row(row);
+                index += 1;
             } else if (!si.local_addr().is_ipv6()) && (ipv4_sockets == true || (ipv4_sockets == false && ipv6_sockets == false)){
                 table.add_row(row);
+                index += 1;
             }
         }
 
