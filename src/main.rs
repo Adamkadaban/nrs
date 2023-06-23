@@ -159,7 +159,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 Row::new(vec![
                     row_number,
                     Cell::new(protocol_type),
-                    Cell::new(format!("{}:{}",tcp_si.local_addr,tcp_si.local_port).as_str()),
+                    Cell::new(format!("{}:{}",&tcp_si.local_addr,&tcp_si.local_port).as_str()),
                     // Cell::new(&tcp_si.local_addr.to_string()),
                     // Cell::new(&tcp_si.local_port.to_string()),
                     Cell::new(&tcp_si.remote_addr.to_string()),
@@ -173,7 +173,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 Row::new(vec![
                     row_number,
                     Cell::new(protocol_type),
-                    Cell::new(format!("[{}]:{}",tcp_si.local_addr,tcp_si.local_port).as_str()),
+                    Cell::new(format!("[{}]:{}",&tcp_si.local_addr,&tcp_si.local_port).as_str()),
                     // Cell::new(&tcp_si.local_addr.to_string()),
                     // Cell::new(&tcp_si.local_port.to_string()),
                     Cell::new(&tcp_si.remote_addr.to_string()),
@@ -186,7 +186,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 Row::new(vec![
                     row_number,
                     Cell::new(protocol_type),
-                    Cell::new(format!("{}:{}",udp_si.local_addr,udp_si.local_port).as_str()),
+                    Cell::new(format!("{}:{}",&udp_si.local_addr,&udp_si.local_port).as_str()),
                     // Cell::new(&udp_si.local_addr.to_string()),
                     // Cell::new(&udp_si.local_port.to_string()),
                     Cell::new("*"),
@@ -200,7 +200,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 Row::new(vec![
                     row_number,
                     Cell::new(protocol_type),
-                    Cell::new(format!("{}:{}",udp_si.local_addr,udp_si.local_port).as_str()),
+                    Cell::new(format!("{}:{}",&udp_si.local_addr,&udp_si.local_port).as_str()),
                     // Cell::new(&udp_si.local_addr.to_string()),
                     // Cell::new(&udp_si.local_port.to_string()),
                     Cell::new("*"),
