@@ -70,6 +70,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             .takes_value(false))
         .get_matches();
 
+
     let listening_sockets = matches.is_present("listening");
     let ipv4_sockets = matches.is_present("inet4");
     let ipv6_sockets = matches.is_present("inet6");
